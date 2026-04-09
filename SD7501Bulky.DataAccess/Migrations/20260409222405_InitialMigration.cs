@@ -7,34 +7,35 @@
 namespace SD7501Bulky.DataAccess.Migrations
 {
     /// <inheritdoc />
-    public partial class addProductsToDb : Migration
+    public partial class InitialMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropPrimaryKey(
-                name: "PK_Categories",
-                table: "Categories");
-
-            migrationBuilder.RenameTable(
+            migrationBuilder.CreateTable(
                 name: "Categories",
-                newName: "Category");
-
-            migrationBuilder.AddPrimaryKey(
-                name: "PK_Category",
-                table: "Category",
-                column: "Id");
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    DisplayOrder = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Categories", x => x.Id);
+                });
 
             migrationBuilder.CreateTable(
-                name: "Product",
+                name: "Products",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Author = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ISBN = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Author = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ListPrice = table.Column<int>(type: "int", nullable: false),
                     Price = table.Column<int>(type: "int", nullable: false),
                     Price50 = table.Column<int>(type: "int", nullable: false),
@@ -42,11 +43,21 @@ namespace SD7501Bulky.DataAccess.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Product", x => x.Id);
+                    table.PrimaryKey("PK_Products", x => x.Id);
                 });
 
             migrationBuilder.InsertData(
-                table: "Product",
+                table: "Categories",
+                columns: new[] { "Id", "DisplayOrder", "Name" },
+                values: new object[,]
+                {
+                    { 1, 1, "Action" },
+                    { 2, 2, "SciFi" },
+                    { 3, 3, "History" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Products",
                 columns: new[] { "Id", "Author", "Description", "ISBN", "ListPrice", "Price", "Price100", "Price50", "Title" },
                 values: new object[,]
                 {
@@ -63,20 +74,10 @@ namespace SD7501Bulky.DataAccess.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Product");
+                name: "Categories");
 
-            migrationBuilder.DropPrimaryKey(
-                name: "PK_Category",
-                table: "Category");
-
-            migrationBuilder.RenameTable(
-                name: "Category",
-                newName: "Categories");
-
-            migrationBuilder.AddPrimaryKey(
-                name: "PK_Categories",
-                table: "Categories",
-                column: "Id");
+            migrationBuilder.DropTable(
+                name: "Products");
         }
     }
 }

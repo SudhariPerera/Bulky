@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using SD7501Bulky.Models;
 
 namespace SD7501Bulky.DataAccess.Repository
 {
@@ -23,7 +24,7 @@ namespace SD7501Bulky.DataAccess.Repository
 
         public void Update(Product obj)
         {
-            _db.Product.Update(obj);
+            _db.Products.Update(obj);
         }
     }
 }
