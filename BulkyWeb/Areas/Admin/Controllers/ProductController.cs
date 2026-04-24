@@ -2,6 +2,7 @@
 using BulkyWeb.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.DotNet.Scaffolding.Shared.Messaging;
 using SD7501Bulky.DataAccess.Repository;
 using SD7501Bulky.DataAccess.Repository.IRepository;
 using SD7501Bulky.Models;
@@ -102,36 +103,36 @@ namespace BulkyWeb.Areas.Admin.Controllers
             }
         }
 
-        //EDIT Delete
-        public IActionResult Delete(int id)
+        #region API calls
+        [HttpGet]
+        public IActionResult GetAll()
         {
-            if (id == null || id == 0)
-            {
-                return NotFound();
-            }
-            Product? productFromDb = _unitOfWork.Product.Get(u => u.Id == id);
-            if (productFromDb == null)
-            {
-                return NotFound();
-            }
-            return View(productFromDb);
+            List<Product> objProductList = _unitOfWork.Product.GetAll(includeProperties: "Category").ToList();
+            return Json(new { data = objProductList });
         }
 
-        [HttpPost, ActionName("Delete")]
-        public IActionResult DeletePOST(int? id)
+        [HttpDelete]
+        public IActionResult Delete(int? id)
         {
-            Product? obj = _unitOfWork.Product.Get(u => u.Id == id);
-
-            if (id == null || id == 0)
+            var productToBeDeleted = _unitOfWork.Product.Get(u => u.Id == id);
+            if (productToBeDeleted == null)
             {
-                return NotFound();
+                return Json(new {success = false, Message = "Error while deleting..!"});
             }
 
-            _unitOfWork.Product.Remove(obj);
+            var oldImagePath = Path.Combine(_webHostEnvironment.WebRootPath, productToBeDeleted.ImageUrl.TrimStart('\\'));
+
+            if (System.IO.File.Exists(oldImagePath))
+            {
+                System.IO.File.Exists(oldImagePath);
+            }
+            _unitOfWork.Product.Remove(productToBeDeleted);
+
             _unitOfWork.Save();
-            TempData["success"] = "Product Deleted successfully";
-            return RedirectToAction("Index");
-        }
 
+            return Json(new { success = true, message = "Delete Successful" });
+        }
+      
+        #endregion
     }
 }
