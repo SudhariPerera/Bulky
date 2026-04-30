@@ -112,27 +112,29 @@ namespace BulkyWeb.Areas.Admin.Controllers
         }
 
         [HttpDelete]
-        public IActionResult Delete(int? id)
+        public IActionResult Delete (int? id)
         {
             var productToBeDeleted = _unitOfWork.Product.Get(u => u.Id == id);
             if (productToBeDeleted == null)
             {
-                return Json(new {success = false, Message = "Error while deleting..!"});
+                return Json(new { success = false, Message = "Error while deleting" });
             }
 
             var oldImagePath = Path.Combine(_webHostEnvironment.WebRootPath, productToBeDeleted.ImageUrl.TrimStart('\\'));
 
             if (System.IO.File.Exists(oldImagePath))
             {
-                System.IO.File.Exists(oldImagePath);
+                System.IO.File.Delete(oldImagePath);
             }
+
             _unitOfWork.Product.Remove(productToBeDeleted);
 
             _unitOfWork.Save();
 
-            return Json(new { success = true, message = "Delete Successful" });
+            return Json(new { success = true, Message = "Delete Successful" });
+
         }
-      
         #endregion
+
     }
 }
