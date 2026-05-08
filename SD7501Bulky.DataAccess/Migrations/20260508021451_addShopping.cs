@@ -5,7 +5,7 @@
 namespace SD7501Bulky.DataAccess.Migrations
 {
     /// <inheritdoc />
-    public partial class addCompanyRecords : Migration
+    public partial class addShopping : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
