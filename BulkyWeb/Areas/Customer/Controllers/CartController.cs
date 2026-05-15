@@ -22,7 +22,7 @@ namespace BulkyWeb.Areas.Customer.Controllers
         {
             _unitOfWork = unitOfWork;
         }
-         
+
         public IActionResult Index()
         {
             var claimsIdentity = (ClaimsIdentity)User.Identity;
@@ -33,9 +33,9 @@ namespace BulkyWeb.Areas.Customer.Controllers
                 ShoppingCartList = _unitOfWork.ShoppingCart.GetAll(
                     u => u.ApplicationUserId == userId,
                     includeProperties: "Product"),
-                OrderHeader=new()
+                OrderHeader = new()
             };
-             foreach (var cart in ShoppingCartVM.ShoppingCartList)
+            foreach (var cart in ShoppingCartVM.ShoppingCartList)
             {
                 cart.Price = GetPriceBasedOnQuantity(cart);
                 ShoppingCartVM.OrderHeader.OrderTotal += (cart.Price * cart.Count);
@@ -50,7 +50,7 @@ namespace BulkyWeb.Areas.Customer.Controllers
             var claimsIdentity = (ClaimsIdentity)User.Identity;
             var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
 
-            ShoppingCartVM.ShoppingCartList = _unitOfWork.ShoppingCart.GetAll(u => u.ApplicationUserId == userId,includeProperties: "Product");
+            ShoppingCartVM.ShoppingCartList = _unitOfWork.ShoppingCart.GetAll(u => u.ApplicationUserId == userId, includeProperties: "Product");
 
             ShoppingCartVM.OrderHeader.OrderDate = System.DateTime.Now;
             ShoppingCartVM.OrderHeader.ApplicationUserId = userId;
@@ -136,7 +136,7 @@ namespace BulkyWeb.Areas.Customer.Controllers
 
         private double GetPriceBasedOnQuantity(ShoppingCart shoppingCart)
         {
-            if(shoppingCart.Count <= 50)
+            if (shoppingCart.Count <= 50)
             {
                 return shoppingCart.Product.Price;
             }
