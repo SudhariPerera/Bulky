@@ -1,4 +1,5 @@
 ﻿using BulkyWeb.Data;
+using Microsoft.EntityFrameworkCore;
 using SD7501Bulky.DataAccess.Repository.IRepository;
 using SD7501Bulky.Models;
 using System;
@@ -9,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace SD7501Bulky.DataAccess.Repository
 {
-    internal class OrderHeaderRepository : Repository<OrderHeader>, IOrderHeaderRepository
+    public class OrderHeaderRepository : Repository<OrderHeader>, IOrderHeaderRepository
     {
         private ApplicationDbContext _db;
         public OrderHeaderRepository(ApplicationDbContext db) : base(db)
@@ -24,6 +25,33 @@ namespace SD7501Bulky.DataAccess.Repository
         public void Update(OrderHeader obj)
         {
             _db.OrderHeaders.Update(obj);
+        }
+
+        public void UpdateStatus(int id, string orderStatus, string? paymentStatus)
+        {
+            var orderFromDb=_db.OrderHeaders.FirstOrDefault(u=>u.Id== id);
+            if ((orderFromDb != null))
+            {
+                orderFromDb.OrderStatus = orderStatus;
+                if(!string.IsNullOrEmpty(paymentStatus))
+                {
+                    orderFromDb.PaymentStatus = paymentStatus;
+                }
+            }
+        }
+
+        public void UpdateStripePaymentID(int id, string sessionID, string paymentIntentID)
+        {
+            var orderFromDb = _db.OrderHeaders.FirstOrDefault(u => u.Id == id);
+            if (!string.IsNullOrEmpty(sessionID))
+            {
+                orderFromDb.SessionId = sessionID;
+            }
+            if (!string.IsNullOrEmpty(paymentIntentID))
+            {
+                orderFromDb.PaymentIntentId = paymentIntentID; 
+                orderFromDb.PaymentDate = DateTime.Now;
+            }
         }
     }
 }
